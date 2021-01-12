@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "Tag-It",
+  "version": "1.0.0",
+  "description": "Plan your time",
+  "homepage_url": "https://github.com/saintograph/tag-it",
+  "icons": {
+    "32": "icons/32.png",
+    "48": "icons/48.png"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": "icons/32.png",
+    "default_title": "Tag-It",
+    "default_popup": "popup/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.example.org/*"],
+      "js": ["popup/main.js"]
+    }
+  ]
+}
