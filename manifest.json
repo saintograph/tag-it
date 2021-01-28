@@ -18,8 +18,8 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.example.org/*"],
-      "js": ["popup/main.js"]
+      "matches": [ "<all_urls>" ],
+      "js": [ "popup/main.js", "urlvalidation/is_url.js" ]    
     }
   ]
 }
