@@ -36,8 +36,12 @@ function is_url_tst3(str) {
     }
 }
 test3 = is_url_tst3("https://www.coursera.org/")
-if (test3) console.log("Unit test 3 passed");
-else console.log("Unit test 3 failed");
+if (test3) {
+    console.log("Unit test 3 passed");
+} else {
+    console.log("Unit test 3 failed");
+}
+
 
 test4 = is_url_tst3("https://www.coursera/")
 if (test4) console.log("Unit test 3 failed");
