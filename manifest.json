@@ -10,8 +10,8 @@
   },
   "permissions": [
     "activeTab",
-	"storage",
-	"tabs"
+    "storage",
+    "tabs"
   ],
   "browser_action": {
     "default_icon": "icons/32.png",
@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": [ "<all_urls>" ],
-      "js": [ "popup/main.js", "urlvalidation/is_url.js" ]    
+      "js": [ "popup/main.js"]    
     }
   ]
 }
