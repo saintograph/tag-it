@@ -4,7 +4,7 @@ function is_url_tst1(str) {
     return true;
 }
 
-test1 = is_url_tst1("https://www.coursera.org/")
+const test1 = is_url_tst1("https://www.coursera.org/")
 if (test1) {
     console.log("Unit test 1 passed");
 }
@@ -21,7 +21,7 @@ function is_url_tst2(str) {
     return false;
 }
 
-test2 = is_url_tst2("https://www.coursera.org/")
+const test2 = is_url_tst2("https://www.coursera.org/")
 if (test2) {
     console.log("Unit test 2 passed");
 }
@@ -41,7 +41,7 @@ function is_url_tst3(str) {
     return false;
 }
 
-test3 = is_url_tst3("https://www.coursera.org/")
+const test3 = is_url_tst3("https://www.coursera.org/")
 if (test3) {
     console.log("Unit test 3 passed");
 }
@@ -49,7 +49,7 @@ else {
     console.log("Unit test 3 failed");
 }
 
-test4 = is_url_tst3("https://www.coursera/")
+const test4 = is_url_tst3("https://www.coursera/")
 if (test4) {
     console.log("Unit test 3 failed");
 }
