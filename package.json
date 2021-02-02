@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "node urlvalidation/is_url.js"
+  }
+}

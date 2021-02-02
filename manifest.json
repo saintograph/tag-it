@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": [ "<all_urls>" ],
-      "js": [ "popup/main.js", "urlvalidation/is_url.js" ]    
+      "js": [ "popup/main.js"]    
     }
   ]
 }
