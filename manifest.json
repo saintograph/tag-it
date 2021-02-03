@@ -9,7 +9,9 @@
     "48": "icons/48.png"
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage",
+    "tabs"
   ],
   "browser_action": {
     "default_icon": "icons/32.png",
@@ -18,8 +20,8 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.example.org/*"],
-      "js": ["popup/main.js"]
+      "matches": [ "<all_urls>" ],
+      "js": [ "popup/main.js"]    
     }
   ]
 }

@@ -1,6 +1,7 @@
 <head>
   <link rel="stylesheet" href="../assets/chota.min.css">
   <link rel="stylesheet" href="css/main.css">
+
 </head>
 
 <body style="height: 420px; width: 320px; padding: 20px;">
@@ -12,10 +13,19 @@
         </a>
       </div>
     </nav>
-  <div>
-    <p style="text-align: center; margin-top: 25px;">
-      <a style="color: #92abf4;" href="https://sites.google.com/view/currency-ex-disclaimer/home">Disclaimer</a>
-    </p>
+    <div>
+      <p>Reading time: <span id="readingTime">0</span> minutes</p>
+    </div>
+    <div>
+      <p style="text-align: center; margin-top: 25px;">
+        <a style="color: #92abf4;" href="https://sites.google.com/view/currency-ex-disclaimer/home">Disclaimer</a>
+      </p>
+    </div>
+    <div>
+      <button type="button" id="saveLinkButton">Save Link</button>
+      <button type="button" id="parsePageButton">Parse Page</button>
+    </div>
+    <script src="./dist/localforage.js"></script>
+    <script src="main.js"></script>
   </div>
-  <script src="main.js"></script>
 </body>
