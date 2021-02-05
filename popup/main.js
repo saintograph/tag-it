@@ -33,6 +33,54 @@ function saveURL() {
     
 } 
 
+function saveScreenshot() {
+
+    chrome.tabs.captureVisibleTab(null, function (img) {
+        fetch(img).then(function (response) {
+            return response.blob();
+        }).then(function (blob) {
+
+            let reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onload = (function (f) {
+                var screenshotObject = new Object();
+                screenshotObject.content = this.result;
+                screenshotObject.id = generateID();
+                //Save the object to local forage Indexed DB 
+                localforage.setItem(screenshotObject.id, screenshotObject.content).then(function (value) {
+
+                    // Test code to display the image
+                    localforage.getItem(screenshotObject.id).then(function (source) {
+                        var image = new Image();
+                        image.src = source;
+                        var w = window.open("", '_blank');
+                        w.document.write(image.outerHTML);
+                        w.resizeTo(window.screen.availWidth / 2,
+                            window.screen.availHeight / 2);
+                        w.document.close();
+
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                    // end test code to display image
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                return function (e) {
+
+                };
+            });
+
+        }).catch(console.log.bind(console));
+    });
+
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('saveLinkButton').addEventListener('click', saveURL);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('saveScreenShot').addEventListener('click', saveScreenshot);
 });
