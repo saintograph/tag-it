@@ -1,86 +1,91 @@
 function generateID() {
-
-    var idString = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
-    return idString;
+  var idString =
+    new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
+  return idString;
 }
 
 function getCurrentTimeStamp() {
-
-    var curTimeStamp = new Date().toJSON();
-    return curTimeStamp;
+  var curTimeStamp = new Date().toJSON();
+  return curTimeStamp;
 }
 /** function called from the button eventlistener */
 function saveURL() {
+  var urlString;
+  // Get the URL from the active tab
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+    urlString = tabs[0].url;
 
-    var urlString;
-    // Get the URL from the active tab
-    chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => {
-        urlString = tabs[0].url;
+    //JSON object for storing the data
+    var urlObject = new Object();
+    urlObject.id = generateID();
+    urlObject.address = urlString;
+    urlObject.timestamp = getCurrentTimeStamp();
+    var jsonURLObject = JSON.stringify(urlObject);
 
-        //JSON object for storing the data
-        var urlObject = new Object();
-        urlObject.id = generateID();
-        urlObject.address = urlString;
-        urlObject.timestamp = getCurrentTimeStamp();
-        var jsonURLObject = JSON.stringify(urlObject);
-
-        //Save the object to local forage Indexed DB 
-        localforage.setItem(urlObject.id, jsonURLObject).then(function (value) {
-        }).catch(function (err) {
-            console.log(err);
-        });
-    });
-    
-} 
-
-function saveScreenshot() {
-
-    chrome.tabs.captureVisibleTab(null, function (img) {
-        fetch(img).then(function (response) {
-            return response.blob();
-        }).then(function (blob) {
-
-            let reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onload = (function (f) {
-                var screenshotObject = new Object();
-                screenshotObject.content = this.result;
-                screenshotObject.id = generateID();
-                //Save the object to local forage Indexed DB 
-                localforage.setItem(screenshotObject.id, screenshotObject.content).then(function (value) {
-
-                    // Test code to display the image
-                    localforage.getItem(screenshotObject.id).then(function (source) {
-                        var image = new Image();
-                        image.src = source;
-                        var w = window.open("", '_blank');
-                        w.document.write(image.outerHTML);
-                        w.resizeTo(window.screen.availWidth / 2,
-                            window.screen.availHeight / 2);
-                        w.document.close();
-
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-                    // end test code to display image
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-                return function (e) {
-
-                };
-            });
-
-        }).catch(console.log.bind(console));
-    });
-
+    //Save the object to local forage Indexed DB
+    localforage
+      .setItem(urlObject.id, jsonURLObject)
+      .then(function (value) {})
+      .catch(function (err) {
+        console.log(err);
+      });
+  });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('saveLinkButton').addEventListener('click', saveURL);
-});
+function saveScreenshot() {
+  chrome.tabs.captureVisibleTab(null, function (img) {
+    fetch(img)
+      .then(function (response) {
+        return response.blob();
+      })
+      .then(function (blob) {
+        let reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (f) {
+          var screenshotObject = new Object();
+          screenshotObject.content = this.result;
+          screenshotObject.id = generateID();
+          //Save the object to local forage Indexed DB
+          localforage
+            .setItem(screenshotObject.id, screenshotObject.content)
+            .then(function (value) {
+              // Test code to display the image
+              localforage
+                .getItem(screenshotObject.id)
+                .then(function (source) {
+                  var image = new Image();
+                  image.src = source;
+                  var w = window.open("", "_blank");
+                  w.document.write(image.outerHTML);
+                  w.resizeTo(
+                    window.screen.availWidth / 2,
+                    window.screen.availHeight / 2
+                  );
+                  w.document.close();
+                })
+                .catch(function (err) {
+                  console.log(err);
+                });
+              // end test code to display image
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+          return function (e) {};
+        };
+      })
+      .catch(console.log.bind(console));
+  });
+}
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('saveScreenShot').addEventListener('click', saveScreenshot);
+function openTab() {
+  chrome.tabs.create({ url: "chrome://newTab" });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("saveLinkButton").addEventListener("click", saveURL);
+  document
+    .getElementById("saveScreenShot")
+    .addEventListener("click", saveScreenshot);
+  document.getElementById("openNewTab").addEventListener("click", openTab);
 });
