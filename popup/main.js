@@ -22,13 +22,38 @@ function saveURL() {
         urlObject.id = generateID();
         urlObject.address = urlString;
         urlObject.timestamp = getCurrentTimeStamp();
-        var jsonURLObject = JSON.stringify(urlObject);
+        const myPromise = new Promise(function (resolve, reject) {
 
-        //Save the object to local forage Indexed DB 
-        localforage.setItem(urlObject.id, jsonURLObject).then(function (value) {
-        }).catch(function (err) {
-            console.log(err);
-        });
+            const modifyDOM = () => document.body.innerHTML;
+
+            chrome.tabs.executeScript(
+                {
+                    code: `(${modifyDOM})();`,
+                },
+                (results) => {
+
+                    const cleanText = results[0].replace(/<[^>]*>?/gm, '');
+                    const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
+                    const readingTime = Math.floor(wordCount / 228) + 1;
+                    urlObject.readingTime = readingTime;
+                    //Save the object to local forage Indexed DB 
+                    localforage.setItem(urlObject.id, JSON.stringify(urlObject)).then(function (value) {
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            );
+
+        })
+        myPromise
+            .then(function whenOk(response) {
+                console.log(response)
+                return response
+            })
+            .catch(function notOk(err) {
+                console.error(err)
+            })
+        
     });
     
 } 
@@ -76,6 +101,24 @@ function saveScreenshot() {
     });
 
 }
+
+const parsePage = () => {
+    const modifyDOM = () => document.body.innerHTML;
+
+    chrome.tabs.executeScript(
+        {
+            code: `(${modifyDOM})();`,
+        },
+        (results) => {
+            
+            const cleanText = results[0].replace(/<[^>]*>?/gm, '');
+            const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
+            const readingTime = Math.floor(wordCount / 228) + 1;
+            return readingTime;
+           // document.getElementById("readingTime").innerText = readingTime;
+        }
+    );
+};
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('saveLinkButton').addEventListener('click', saveURL);
