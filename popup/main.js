@@ -22,7 +22,7 @@ function saveURL() {
         urlObject.id = generateID();
         urlObject.address = urlString;
         urlObject.timestamp = getCurrentTimeStamp();
-        const myPromise = new Promise(function (resolve, reject) {
+        const saveLink = new Promise(function (resolve, reject) {
 
             const modifyDOM = () => document.body.innerHTML;
 
@@ -45,14 +45,9 @@ function saveURL() {
             );
 
         })
-        myPromise
-            .then(function whenOk(response) {
-                console.log(response)
-                return response
-            })
-            .catch(function notOk(err) {
-                console.error(err)
-            })
+        saveLink
+            .then(response => response)
+            .catch(err => console.log(err))
         
     });
     
@@ -101,24 +96,6 @@ function saveScreenshot() {
     });
 
 }
-
-const parsePage = () => {
-    const modifyDOM = () => document.body.innerHTML;
-
-    chrome.tabs.executeScript(
-        {
-            code: `(${modifyDOM})();`,
-        },
-        (results) => {
-            
-            const cleanText = results[0].replace(/<[^>]*>?/gm, '');
-            const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
-            const readingTime = Math.floor(wordCount / 228) + 1;
-            return readingTime;
-           // document.getElementById("readingTime").innerText = readingTime;
-        }
-    );
-};
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('saveLinkButton').addEventListener('click', saveURL);
