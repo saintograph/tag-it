@@ -9,8 +9,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     // parse error free entries
     try {
       const parsed = JSON.parse(rawEntry);
-      // push entries which are not images to entries array
-      if (parsed.id && !parsed.address.includes("chrome://")) {
+      const age = (Date.now() - new Date(parsed.timestamp)) / (1000 * 60 * 60 * 24); // calculate age of entry
+
+      // push entries which are not images or older than a week to entries array
+      if (parsed.id && !parsed.address.includes("chrome://") && Math.ceil(age) < 8) {
         entries.push(parsed);
       }
     } catch(error) {
