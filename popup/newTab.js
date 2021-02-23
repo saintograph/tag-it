@@ -1,15 +1,45 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const dummyLinks = ["link 1", "link 2", "link 3", "link 4"];
+document.addEventListener("DOMContentLoaded", async function () {
+  const entries = [];
+  const keys = await localforage.keys();
+  
+  for (let i in keys) {
+    const rawEntry = await localforage.getItem(keys[i]);
+    try {
+      const parsed = JSON.parse(rawEntry);
+      if (parsed.id && !parsed.address.includes("chrome://")) {
+        entries.push(parsed);
+      }
+    } catch(error) {
+      // do nothing
+      ;
+    }
+  }
 
-  for (let i = 0; i < dummyLinks.length; i += 1) {
-    const newAnchorTag = document.createElement("a");
-    const newContent = document.createTextNode(dummyLinks[i]);
-    newAnchorTag.appendChild(newContent);
-    newAnchorTag.title = dummyLinks[i];
-    newAnchorTag.href = "http://example.com";
-    newAnchorTag.target = "_blank"; // open link in new tab
-    newAnchorTag.style.display = "block";
+  if (entries.length !== 0) {
+    for (let i = 0; i < entries.length; i += 1) {
+      const newAnchorTag = document.createElement("a");
+      let newContent;
+      if (entries[i].readingTime) {
+        newContent = document.createTextNode(`Link: ${entries[i].address.split("//")[1].split("/")[0]}, Reading Time: ${entries[i].readingTime} minutes`);
+      } else {
+        newContent = document.createTextNode(`Link: ${entries[i].address.split("//")[1].split("/")[0]}`);
+      }
+      newAnchorTag.appendChild(newContent);
 
-    document.body.appendChild(newAnchorTag);
+      // if (entries[i].readingTime) {
+      //   console.log("TEST", entries[i].address.split("//")[1])
+      //   newAnchorTag.title = `${entries[i].address.split("//")[1]}, Reading Time: ${entries[i].readingTime} minutes`;
+      // } else {
+      //   newAnchorTag.title = entries[i].address.split("//")[1];
+      // }
+
+      newAnchorTag.title = entries[i].address.split("//")[1];
+      newAnchorTag.href = entries[i].address;
+      newAnchorTag.target = "_blank"; // open link in new tab
+      newAnchorTag.style.display = "block";
+
+      document.body.appendChild(newAnchorTag);
+
+    }
   }
 });
