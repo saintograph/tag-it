@@ -22,16 +22,36 @@ function saveURL() {
         urlObject.id = generateID();
         urlObject.address = urlString;
         urlObject.timestamp = getCurrentTimeStamp();
-        var jsonURLObject = JSON.stringify(urlObject);
+        const saveLink = new Promise(function (resolve, reject) {
 
-        //Save the object to local forage Indexed DB 
-        localforage.setItem(urlObject.id, jsonURLObject).then(function (value) {
-        }).catch(function (err) {
-            console.log(err);
-        });
+            const modifyDOM = () => document.body.innerHTML;
+
+            chrome.tabs.executeScript(
+                {
+                    code: `(${modifyDOM})();`,
+                },
+                (results) => {
+
+                    const cleanText = results[0].replace(/<[^>]*>?/gm, '');
+                    const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
+                    const readingTime = Math.floor(wordCount / 228) + 1;
+                    urlObject.readingTime = readingTime;
+                    //Save the object to local forage Indexed DB 
+                    localforage.setItem(urlObject.id, JSON.stringify(urlObject)).then(function (value) {
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            );
+
+        })
+        saveLink
+            .then(response => response)
+            .catch(err => console.log(err))
+
     });
-    
-} 
+
+}
 
 function saveScreenshot() {
 
