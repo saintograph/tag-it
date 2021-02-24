@@ -2,19 +2,29 @@
 document.addEventListener("DOMContentLoaded", async function () {
   // entries array for storing items from browser's localforage
   const entries = [];
+  const imageEntries = [];
   const keys = await localforage.keys(); // asynchronously retrieve all keys
   
   for (let i in keys) {
     const rawEntry = await localforage.getItem(keys[i]);
+    
+    // create array of images
+    if (rawEntry.includes("data:image/jpeg;base64")) {
+      imageEntries.push(rawEntry);
+    }
+
     // parse error free entries
     try {
       const parsed = JSON.parse(rawEntry);
       const age = (Date.now() - new Date(parsed.timestamp)) / (1000 * 60 * 60 * 24); // calculate age of entry
-
       // push entries which are not images or older than a week to entries array
       if (parsed.id && !parsed.address.includes("chrome://") && Math.ceil(age) < 8) {
         entries.push(parsed);
       }
+      
+      // if (!parsed.id) {
+      //   imageEntries.push(parsed);
+      // }
     } catch(error) {
       // if error or image, do nothing
       ;
@@ -42,6 +52,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // append new <a> tag to body of web page
       document.body.appendChild(newAnchorTag);
+    }
+  }
+
+  // insert space 
+  document.body.appendChild(document.createElement("br"));
+
+  // loop through images and display
+  if (imageEntries.length !== 0) {
+    for (let i = 0; i < imageEntries.length; i += 1) {
+      const newImageTag = document.createElement("IMG");
+      newImageTag.src = imageEntries[i];
+      newImageTag.width = 320;
+      newImageTag.height = 240;
+      document.body.appendChild(newImageTag);
     }
   }
 });
