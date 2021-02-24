@@ -21,10 +21,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (parsed.id && !parsed.address.includes("chrome://") && Math.ceil(age) < 8) {
         entries.push(parsed);
       }
-      
-      // if (!parsed.id) {
-      //   imageEntries.push(parsed);
-      // }
     } catch(error) {
       // if error or image, do nothing
       ;
