@@ -69,7 +69,7 @@ function saveScreenshot() {
                 //Save the object to local forage Indexed DB 
                 localforage.setItem(screenshotObject.id, screenshotObject.content).then(function (value) {
 
-                    // Test code to display the image
+                    //display the image
                     localforage.getItem(screenshotObject.id).then(function (source) {
                         var image = new Image();
                         image.src = source;
@@ -82,7 +82,7 @@ function saveScreenshot() {
                     }).catch(function (err) {
                         console.log(err);
                     });
-                    // end test code to display image
+                    // end code to display image
 
                 }).catch(function (err) {
                     console.log(err);
@@ -96,6 +96,37 @@ function saveScreenshot() {
     });
 
 }
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const keys = await localforage.keys(); // asynchronously retrieve all keys
+    var readingTime = 0;
+    const dateMonday = await getMonday();
+    for (let i in keys) {
+        const rawEntry = await localforage.getItem(keys[i]);
+        // parse error free entries
+        try {
+            const parsed = JSON.parse(rawEntry);
+            if (parsed.id && parsed.readingTime && (new Date(parsed.timestamp).getTime() >= dateMonday.getTime())) {
+                readingTime = readingTime + parsed.readingTime;
+            }
+
+        } catch (error) {
+            // if error or image, do nothing
+            ;
+        }
+    }
+    document.getElementById("readingTime").innerText = readingTime;
+
+});
+    function getMonday() {
+        var d = new Date();
+        console.log("date today" + d.toString());
+        var day = d.getDay();
+        console.log("day today" + day);
+        diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+        return new Date(d.setDate(diff));
+    }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('saveLinkButton').addEventListener('click', saveURL);
