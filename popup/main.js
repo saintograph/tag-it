@@ -10,27 +10,47 @@ function getCurrentTimeStamp() {
 }
 /** function called from the button eventlistener */
 function saveURL() {
-  var urlString;
-  // Get the URL from the active tab
-  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    urlString = tabs[0].url;
 
-    //JSON object for storing the data
-    var urlObject = new Object();
-    urlObject.id = generateID();
-    urlObject.address = urlString;
-    urlObject.timestamp = getCurrentTimeStamp();
-    var jsonURLObject = JSON.stringify(urlObject);
+    var urlString;
+    // Get the URL from the active tab
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => {
+        urlString = tabs[0].url;
 
-    //Save the object to local forage Indexed DB
-    localforage
-      .setItem(urlObject.id, jsonURLObject)
-      .then(function (value) {})
-      .catch(function (err) {
-        console.log(err);
-      });
-  });
-}
+        //JSON object for storing the data
+        var urlObject = new Object();
+        urlObject.id = generateID();
+        urlObject.address = urlString;
+        urlObject.timestamp = getCurrentTimeStamp();
+        const saveLink = new Promise(function (resolve, reject) {
+
+            const modifyDOM = () => document.body.innerHTML;
+
+            chrome.tabs.executeScript(
+                {
+                    code: `(${modifyDOM})();`,
+                },
+                (results) => {
+
+                    const cleanText = results[0].replace(/<[^>]*>?/gm, '');
+                    const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
+                    const readingTime = Math.floor(wordCount / 228) + 1;
+                    urlObject.readingTime = readingTime;
+                    //Save the object to local forage Indexed DB 
+                    localforage.setItem(urlObject.id, JSON.stringify(urlObject)).then(function (value) {
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            );
+
+        })
+        saveLink
+            .then(response => response)
+            .catch(err => console.log(err))
+        
+    });
+    
+} 
 
 function saveScreenshot() {
   chrome.tabs.captureVisibleTab(null, function (img) {
