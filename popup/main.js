@@ -1,4 +1,3 @@
-
 /** function called from the button eventlistener */
 function saveURL() {
   var urlString;
@@ -99,7 +98,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         readingTime = readingTime + parsed.readingTime;
       }
     } catch (error) {
-      ; // if error or image, do nothing
+      // if error or image, do nothing
     }
   }
   document.getElementById("readingTime").innerText = readingTime;
