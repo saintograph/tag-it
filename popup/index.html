@@ -1,17 +1,19 @@
 <head>
-    <link rel="stylesheet" href="../assets/chota.min.css">
-    <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="../assets/chota.min.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body style="height: 420px; width: 320px; padding: 20px;">
-    <div class="container">
-        <img src="../assets/images/logo.png">
-        <div class="main-container">
-            <button class="button outline primary" type="button" id="saveLinkButton">Save Link</button>
-            <button class="button outline primary button-reset" type="button" id="saveScreenShot">Save Screenshot</button>
-            <button class="button outline primary button-reset" type="button" id="openNewTab">Open Tab</button>
-        </div>
-        <script src="./dist/localforage.js"></script>
-        <script src="main.js"></script>
+  <div class="container">
+    <img src="../assets/images/logo.png">
+    <div class="main-container">
+      <button class="button outline primary" type="button" id="saveLinkButton">Save Link</button>
+      <button class="button outline primary button-reset" type="button" id="saveScreenShot">Save Screenshot</button>
+      <button class="button outline primary button-reset" type="button" id="openNewTab">Open Tab</button>
+      <p>Reading Time: <span id="readingTime"></span> minutes</p>
     </div>
+    <script src="./dist/localforage.js"></script>
+    <script src="utils.js"></script>
+    <script src="main.js"></script>
+  </div>
 </body>
