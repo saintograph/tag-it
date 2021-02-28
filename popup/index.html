@@ -1,32 +1,17 @@
 <head>
     <link rel="stylesheet" href="../assets/chota.min.css">
     <link rel="stylesheet" href="css/main.css">
-   
 </head>
 
 <body style="height: 420px; width: 320px; padding: 20px;">
     <div class="container">
-        <nav class="nav">
-            <div class="nav-center">
-                <a class="brand">
-                    <p>Tag-It!</p>
-                </a>
-            </div>
-        </nav>
-        <div>
-            <p style="text-align: center; margin-top: 25px;">
-                <a style="color: #92abf4;" href="https://sites.google.com/view/currency-ex-disclaimer/home">Disclaimer</a>
-            </p>
-        </div>
-        <div>
-            <button type="button" id="saveLinkButton">Save Link</button>
-        </div>
-        <div>
-            <button type="button" id="saveScreenShot">Save Screenshot</button>
+        <img src="../assets/images/logo.png">
+        <div class="main-container">
+            <button class="button outline primary" type="button" id="saveLinkButton">Save Link</button>
+            <button class="button outline primary button-reset" type="button" id="saveScreenShot">Save Screenshot</button>
+            <button class="button outline primary button-reset" type="button" id="openNewTab">Open Tab</button>
         </div>
         <script src="./dist/localforage.js"></script>
-
         <script src="main.js"></script>
     </div>
-
 </body>

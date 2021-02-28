@@ -10,9 +10,9 @@
   },
   "permissions": [
     "activeTab",
-	"storage",
-	"tabs",
-	"all_urls"
+    "storage",
+    "tabs",
+    "all_urls"
   ],
   "browser_action": {
     "default_icon": "icons/32.png",
@@ -21,8 +21,15 @@
   },
   "content_scripts": [
     {
-      "matches": [ "<all_urls>" ],
-      "js": [ "popup/main.js", "urlvalidation/is_url.js" ]    
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "popup/main.js"
+      ]
     }
-  ]
+  ],
+  "chrome_url_overrides": {
+    "newtab": "popup/newTab.html"
+  }
 }
