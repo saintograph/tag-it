@@ -1,71 +1,82 @@
 /** function called from the button eventlistener */
 function saveURL() {
-  var urlString;
   // Get the URL from the active tab
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    urlString = tabs[0].url;
+    // validate url
+    if (tabs.length !== 0 && validURL(tabs[0].url)) {
+      const urlString = tabs[0].url;
 
-    //JSON object for storing the data
-    var urlObject = new Object();
-    urlObject.id = generateID();
-    urlObject.address = urlString;
-    urlObject.timestamp = getCurrentTimeStamp();
-    const saveLink = new Promise(function (resolve, reject) {
-      const modifyDOM = () => document.body.innerHTML;
+      //JSON object for storing the data
+      const urlObject = {
+        id: generateID(),
+        address: urlString,
+        timestamp: getCurrentTimeStamp(),
+      };
 
-      chrome.tabs.executeScript(
-        {
-          code: `(${modifyDOM})();`,
-        },
-        (results) => {
-          const cleanText = results[0].replace(/<[^>]*>?/gm, "");
-          const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/)
-            .length;
-          const readingTime = Math.floor(wordCount / 228) + 1;
-          urlObject.readingTime = readingTime;
-          //Save the object to local forage Indexed DB
-          localforage
-            .setItem(urlObject.id, JSON.stringify(urlObject))
-            .then(function (value) {})
-            .catch(function (err) {
-              console.log(err);
-            });
-        }
-      );
-    });
-    saveLink.then((response) => response).catch((err) => console.log(err));
+      const saveLink = new Promise(function (resolve, reject) {
+        const modifyDOM = () => document.body.innerHTML;
+
+        chrome.tabs.executeScript(
+          {
+            code: `(${modifyDOM})();`,
+          },
+          (results) => {
+            const cleanText = results[0].replace(/<[^>]*>?/gm, "");
+            const wordCount = cleanText.replace(/[^\w ]/g, "").split(/\s+/).length;
+
+            const readingTime = Math.floor(wordCount / 228) + 1;
+            urlObject.readingTime = readingTime;
+            //Save the object to local forage Indexed DB
+            localforage
+              .setItem(urlObject.id, JSON.stringify(urlObject))
+              .then(value => {
+                // display notification that link was successfully saved
+                notificationDialog("Link successfully saved!");
+              })
+              .catch(function (err) {
+                console.log(err);
+              });
+          }
+        );
+      });
+      saveLink.then((response) => response).catch((err) => console.log(err));
+    } else {
+      notificationDialog("Invalid URL");
+    }
   });
 }
 
+// save screenshots as base64 string
 function saveScreenshot() {
   chrome.tabs.captureVisibleTab(null, function (img) {
     fetch(img)
       .then((res) => res.blob())
       .then((blob) => {
         const reader = new FileReader();
+
         reader.readAsDataURL(blob);
 
-        reader.onload = function (f) {
-          var screenshotObject = new Object();
+        reader.onload = function () {
+          const screenshotObject = new Object();
           screenshotObject.content = this.result;
           screenshotObject.id = generateID();
           //Save the object to local forage Indexed DB
           localforage
             .setItem(screenshotObject.id, screenshotObject.content)
-            .then(function (value) {
+            .then(value => {
               //display the image
               localforage
                 .getItem(screenshotObject.id)
                 .then(function (source) {
-                  var image = new Image();
+                  const image = new Image();
                   image.src = source;
-                  var w = window.open("", "_blank");
-                  w.document.write(image.outerHTML);
-                  w.resizeTo(
+                  const newWindow = window.open("", "_blank");
+                  newWindow.document.write(image.outerHTML);
+                  newWindow.resizeTo(
                     window.screen.availWidth / 2,
                     window.screen.availHeight / 2
                   );
-                  w.document.close();
+                  newWindow.document.close();
                 })
                 .catch(function (err) {
                   console.log(err);
@@ -75,15 +86,14 @@ function saveScreenshot() {
             .catch(function (err) {
               console.log(err);
             });
-          // end test code to display image
         };
       });
   });
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
+async function getReadingTime() {
   const keys = await localforage.keys(); // asynchronously retrieve all keys
-  var readingTime = 0;
+  let readingTime = 0;
   const dateMonday = await getMonday();
   for (let i in keys) {
     const rawEntry = await localforage.getItem(keys[i]);
@@ -101,10 +111,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       // if error or image, do nothing
     }
   }
-  document.getElementById("readingTime").innerText = readingTime;
-});
+  return readingTime;
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  document.getElementById("readingTime").innerText = await getReadingTime();
   document.getElementById("saveLinkButton").addEventListener("click", saveURL);
   document
     .getElementById("saveScreenShot")
