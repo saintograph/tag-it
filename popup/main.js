@@ -91,10 +91,15 @@ function saveScreenshot() {
   });
 }
 
-async function getReadingTime() {
+const getReadingTime = async () => {
   const keys = await localforage.keys(); // asynchronously retrieve all keys
   let readingTime = 0;
   const dateMonday = await getMonday();
+
+  if (keys.length === 0) {
+    return [];
+  }
+
   for (let i in keys) {
     const rawEntry = await localforage.getItem(keys[i]);
     // parse error free entries
@@ -105,12 +110,14 @@ async function getReadingTime() {
         parsed.readingTime &&
         new Date(parsed.timestamp).getTime() >= dateMonday.getTime()
       ) {
+
         readingTime = readingTime + parsed.readingTime;
       }
     } catch (error) {
       // if error or image, do nothing
     }
   }
+
   return readingTime;
 }
 
@@ -122,3 +129,5 @@ document.addEventListener("DOMContentLoaded", async function () {
     .addEventListener("click", saveScreenshot);
   document.getElementById("openNewTab").addEventListener("click", openTab);
 });
+
+exports.getReadingTime = getReadingTime;

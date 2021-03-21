@@ -1,4 +1,4 @@
-function getMonday() {
+const getMonday = () => {
   const date = new Date();
   const day = date.getDay();
   const diff = date.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
@@ -30,3 +30,9 @@ const validURL = str => {
     '(\\#[-a-z\\d_]*)?$','i');
   return !!pattern.test(str);
 }
+
+exports.validURL = validURL;
+exports.getCurrentTimeStamp = getCurrentTimeStamp;
+exports.generateID = generateID;
+exports.openTab = openTab;
+exports.getMonday = getMonday;
